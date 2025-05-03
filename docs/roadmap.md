@@ -84,7 +84,7 @@ Analizar hábitos de compra y escalar la aplicación.
 
 ## Recomendaciones Clave  
 ✅ **Pruebas:**  
-   - Tests unitarios (Jest) y E2E (Cypress).  
+   - Tests unitarios (Jest) y E2E (Playwright).  
 ✅ **Seguridad:**  
    - Sanitizar inputs SQL para evitar inyecciones.  
 ✅ **Deploy:**  

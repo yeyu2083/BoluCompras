@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/products',
+        destination: 'http://localhost:5678/webhook-test/products',
+      },
+    ];
+  },
 };
 
 export default nextConfig;
