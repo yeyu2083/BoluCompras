@@ -1,6 +1,6 @@
 # Bolucompras List
 
-Bolucompras List es una aplicación diseñada para gestionar listas de compras mensuales de manera eficiente. La aplicación permite a los usuarios agregar productos, manejar duplicados y sincronizar los datos con un backend basado en n8n y una base de datos PostgreSQL.
+Bolucompras List es una aplicación diseñada para gestionar listas de compras mensuales de manera eficiente. La aplicación permite a los usuarios agregar productos, manejar duplicados y sincronizar los datos con un backend basado en Express, n8n para funcionalidades avanzadas y una base de datos MongoDB.
 
 ## Características Principales
 
@@ -8,7 +8,27 @@ Bolucompras List es una aplicación diseñada para gestionar listas de compras m
 - **Agregar Productos**: Agrega productos a la lista mediante un botón o la tecla Enter.
 - **Visualización de la Lista**: Muestra la lista de compras actual con nombres y cantidades de productos.
 - **Manejo de Duplicados**: Solicita confirmación antes de incrementar la cantidad de un producto ya existente.
-- **Integración con Backend**: Sincroniza los datos con un webhook de n8n conectado a una base de datos PostgreSQL.
+- **Integración con Backend**: Operaciones CRUD básicas a través de API RESTful con Express y MongoDB.
+
+## Funcionalidades Implementadas
+
+- **Edición en la Tabla**: Las columnas "Comprado" y "Cantidad" son editables directamente desde la tabla.
+  - La columna "Comprado" permite seleccionar entre "Sí" y "No" mediante un dropdown.
+  - La columna "Cantidad" permite editar el valor directamente en un campo de entrada.
+  - Los cambios se sincronizan automáticamente con el backend mediante solicitudes `PATCH`.
+
+- **Paginación**: La tabla soporta paginación para manejar grandes cantidades de productos.
+  - Los datos se cargan dinámicamente al navegar entre páginas.
+
+- **Confirmación de Duplicados**: Al intentar agregar un producto ya existente, se muestra un modal de confirmación.
+  - Si se confirma, la cantidad del producto se incrementa.
+  - Si se cancela, no se realizan cambios en la lista ni en el backend.
+
+## Funcionalidades Avanzadas con n8n
+
+- **Sugerencias Inteligentes de Productos**: Integración con APIs de IA para recibir recomendaciones basadas en tu historial de compras.
+- **Análisis de Patrones de Compra**: Identifica productos comprados frecuentemente y sugiere cuándo es probable que necesites reabastecerlos.
+- **Notificaciones Personalizadas**: Recibe alertas sobre productos que compras regularmente.
 
 ## Tecnologías Utilizadas
 
@@ -18,11 +38,19 @@ Bolucompras List es una aplicación diseñada para gestionar listas de compras m
 - **Gestión de Estado**: Hooks de React (`useState`, `useEffect`).
 
 ### Backend
-- **Automatización**: n8n para gestionar la lógica del backend.
-- **Base de Datos**: PostgreSQL para almacenar productos y cantidades.
-- **Webhooks**:
-  - `GET http://localhost:5678/webhook-test/products`: Obtiene la lista de productos.
-  - `POST http://localhost:5678/webhook-test/input`: Agrega o actualiza productos en la base de datos.
+- **API RESTful**: Express.js con Node.js para operaciones CRUD básicas.
+- **Base de Datos**: MongoDB para almacenar productos y cantidades.
+- **Automatización**: n8n para integraciones con IA y funcionalidades avanzadas.
+
+### Endpoints de API
+- `GET /api/products`: Obtiene la lista de productos.
+- `POST /api/products`: Agrega un nuevo producto.
+- `PATCH /api/products/:id`: Actualiza un producto existente.
+- `DELETE /api/products/:id`: Elimina un producto.
+
+### Workflows de n8n
+- `Sugerencias de Productos`: Analiza patrones de compra y genera recomendaciones.
+- `Notificaciones`: Envía recordatorios sobre productos recurrentes.
 
 ## Configuración del Proyecto
 
@@ -33,6 +61,7 @@ Bolucompras List es una aplicación diseñada para gestionar listas de compras m
 - `npm run start`: Inicia la aplicación en modo producción.
 - `npm run lint`: Ejecuta el linter.
 - `npm run typecheck`: Verifica los tipos de TypeScript.
+- `npm run server`: Inicia el servidor Express.
 
 ### Dependencias Principales
 
@@ -40,8 +69,10 @@ Bolucompras List es una aplicación diseñada para gestionar listas de compras m
 - **Next.js**: 15.2.3
 - **Tailwind CSS**: ^3.4.1
 - **Shadcn/ui**: Componentes basados en Radix UI.
-- **n8n**: Para la lógica del backend.
-- **PostgreSQL**: Base de datos para persistencia.
+- **Express**: ^4.18.2
+- **MongoDB**: ^6.1.0
+- **Mongoose**: ^8.0.0
+- **n8n**: Para integraciones y automatizaciones avanzadas.
 
 ## Estructura del Proyecto
 
@@ -70,6 +101,18 @@ BoluCompras/
 │   │   └── use-toast.ts
 │   └── lib/
 │       └── utils.ts
+├── server/
+│   ├── index.js
+│   ├── models/
+│   │   └── Product.js
+│   ├── routes/
+│   │   └── products.js
+│   └── config/
+│       └── db.js
+├── n8n/
+    └── workflows/
+        ├── product-suggestions.json
+        └── notifications.json
 ```
 
 ## Cómo Empezar
@@ -82,15 +125,35 @@ BoluCompras/
    ```bash
    npm install
    ```
-3. Inicia el servidor de desarrollo:
+3. Configura la conexión a MongoDB:
+   - Crea un archivo `.env` en la raíz del proyecto
+   - Añade `MONGODB_URI=tu_uri_de_mongodb`
+   
+4. Inicia el servidor Express:
+   ```bash
+   npm run server
+   ```
+5. En otra terminal, inicia el servidor de desarrollo de Next.js:
    ```bash
    npm run dev
    ```
+6. Para funcionalidades avanzadas, configura n8n:
+   - Instala n8n: `npm install n8n -g`
+   - Inicia n8n: `n8n start`
+   - Importa los workflows de la carpeta `n8n/workflows`
+
+## Configuración de MongoDB Atlas (Gratuito)
+
+1. Crea una cuenta en [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Crea un cluster gratuito (M0)
+3. Configura un usuario y contraseña para la base de datos
+4. Configura el acceso de red (IP Whitelist)
+5. Obtén tu string de conexión y añádelo al archivo `.env`
 
 ## Notas Adicionales
 
-- Asegúrate de tener n8n configurado y ejecutándose en `http://localhost:5678`.
-- Configura la base de datos PostgreSQL según las necesidades del proyecto.
+- La aplicación está optimizada para operaciones CRUD básicas con Express y MongoDB, mientras que n8n se utiliza para funcionalidades avanzadas como integraciones con IA.
+- Para entornos de producción, considera implementar autenticación de usuarios.
 
 ## Licencia
 

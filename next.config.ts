@@ -22,7 +22,12 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/products',
-        destination: 'http://localhost:5678/webhook-test/products',
+        destination: 'http://localhost:5000/api/products',
+      },
+      // Rewrite para operaciones con ID (PATCH, DELETE)
+      {
+        source: '/api/products/:id',
+        destination: 'http://localhost:5000/api/products/:id',
       },
     ];
   },
