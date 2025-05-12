@@ -30,6 +30,45 @@ Bolucompras List es una aplicación diseñada para gestionar listas de compras m
 - **Análisis de Patrones de Compra**: Identifica productos comprados frecuentemente y sugiere cuándo es probable que necesites reabastecerlos.
 - **Notificaciones Personalizadas**: Recibe alertas sobre productos que compras regularmente.
 
+## Nuevas Funcionalidades y Mejoras
+
+### Refactorización de Componentes
+- **`AddProductForm`**: Componente modularizado para manejar la entrada de productos, categorías, y prioridades.
+- **`ProductList`**: Componente dedicado para mostrar la lista de productos con estilos mejorados.
+
+### Manejo de Productos Duplicados
+- **Modal de Advertencia**: Implementación de un modal que se activa al detectar un producto duplicado.
+  - Permite actualizar la categoría y prioridad del producto antes de confirmar.
+  - Botones interactivos con efectos de hover y transiciones.
+
+### Mejoras de UI
+- **Estilos Modernos**: Uso de gradientes, efectos de hover y transiciones en botones, encabezados de tablas y campos de entrada.
+- **Accesibilidad**: Se añadió un `DialogTitle` al modal para cumplir con los estándares de accesibilidad.
+
+### Funcionalidad Dinámica
+- **Alternar Visibilidad de la Lista**: Botón dinámico que permite mostrar u ocultar la lista de productos.
+  - Cambia el texto entre "Ver Lista" y "Cerrar Lista" según el estado actual.
+
+### Estructura del Código
+- **`src/app/components/AddProductForm.tsx`**: Maneja la lógica de entrada de productos y el modal de duplicados.
+- **`src/app/components/ProductList.tsx`**: Renderiza la tabla de productos con paginación y estilos mejorados.
+- **`src/components/ui/dialog.tsx`**: Revisión y mejora del componente `Dialog` para asegurar su correcto funcionamiento.
+
+### Scripts Actualizados
+- `npm run dev`: Ahora incluye las nuevas funcionalidades y mejoras de UI.
+
+### Cómo Usar las Nuevas Funcionalidades
+1. **Agregar un Producto**:
+   - Ingresa el nombre del producto en el campo de texto.
+   - Selecciona la categoría y prioridad.
+   - Haz clic en "Agregar Producto".
+2. **Manejo de Duplicados**:
+   - Si el producto ya existe, aparecerá un modal.
+   - Actualiza la categoría y prioridad si es necesario.
+   - Confirma o cancela la acción.
+3. **Alternar Lista**:
+   - Usa el botón "Ver Lista" o "Cerrar Lista" para mostrar u ocultar la tabla de productos.
+
 ## Tecnologías Utilizadas
 
 ### Frontend

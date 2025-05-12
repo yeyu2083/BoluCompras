@@ -67,24 +67,26 @@ const AddProductForm: React.FC<AddProductFormProps & { products: Product[]; onUp
     setExistingProduct(null);
   };
 
+  const categories = ["General", "Alimentos", "Lácteos", "Ropa", "Bebidas", "Frutas y Verduras", "Panadería", "Congelados", "Cereales y Granos", "Condimentos y Salsas", "Productos de Despensa", "Mascotas", "Cuidado Personal", "Otros"];
+
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-md mx-auto sm:max-w-lg md:max-w-xl lg:max-w-2xl">
       <Input
         type="text"
         placeholder="Ingresa el nombre del producto..."
         value={productName}
         onChange={(e) => setProductName(e.target.value)}
         disabled={isLoading}
-        className="border-gray-500 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm bg-gray-700 text-white transition-all duration-300"
+        className="border-gray-500 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm bg-gray-700 text-white transition-all duration-300 w-full"
       />
       <div className="mt-4">
         <label htmlFor="category" className="block text-gray-300 mb-2 font-semibold">Categoría</label>
-        <div className="grid grid-cols-3 gap-2">
-          {["General", "Alimentos", "Lácteos", "Ropa", "Bebidas", "Frutas y Verduras", "Panadería", "Congelados", "Cereales y Granos", "Condimentos y Salsas", "Productos de Despensa", "Mascotas", "Cuidado Personal", "Otros"].map((category) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {categories.map((category) => (
             <button
               key={category}
               onClick={() => setProductCategory(category)}
-              className={`px-4 py-2 rounded-lg shadow-md font-semibold transition-transform transform hover:scale-105 ${
+              className={`px-4 py-2 rounded-lg shadow-md font-semibold transition-transform transform hover:scale-105 w-full text-center ${
                 productCategory === category
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-700 text-gray-300'
@@ -110,30 +112,77 @@ const AddProductForm: React.FC<AddProductFormProps & { products: Product[]; onUp
           <span className="text-gray-300 text-sm">Alta</span>
         </div>
       </div>
-      <div className="flex justify-between mt-4">
+      <div className="flex flex-col sm:flex-row justify-between mt-4 gap-2">
         <Button
           onClick={handleAddProductClick}
           disabled={isLoading || !productName.trim()}
-          className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition-all duration-300"
+          className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition-all duration-300 w-full sm:w-auto"
         >
           {isLoading ? 'Procesando...' : 'Agregar Producto'}
         </Button>
         <Button
           onClick={onToggleList}
-          className={`bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition-all duration-300`}
+          className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition-all duration-300 w-full sm:w-auto"
         >
           {isTableVisible ? 'Cerrar Lista' : 'Ver Lista'}
         </Button>
       </div>
 
       <Dialog open={isDuplicate}>
-        <DialogContent>
+        <DialogContent className="w-full max-w-md sm:max-w-lg">
           <DialogTitle className="text-xl font-bold text-blue-600">Advertencia</DialogTitle>
           <div className="p-4">
-            <p className="text-gray-700 text-lg">El producto "{existingProduct?.name}" ya existe. ¿Deseas agregar la cantidad al producto existente?</p>
-            <div className="flex justify-end mt-4 gap-2">
-              <Button onClick={handleCancelDuplicate} className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg shadow-md">Cancelar</Button>
-              <Button onClick={handleConfirmDuplicate} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md">Confirmar</Button>
+            <p className="text-gray-700 text-lg">El producto "{existingProduct?.name}" ya existe. Puedes actualizar su categoría y prioridad antes de confirmar.</p>
+            <div className="mt-4">
+              <label htmlFor="category" className="block text-gray-600 mb-2 font-semibold">Categoría</label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setProductCategory(category)}
+                    className={`px-4 py-2 rounded-lg shadow-md font-semibold transition-transform transform hover:scale-105 w-full text-center ${
+                      productCategory === category
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-300 text-gray-700'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="mt-4">
+              <label className="block text-gray-600 mb-2 font-semibold">Prioridad</label>
+              <div className="flex items-center gap-4">
+                <span className="text-gray-600 text-sm">Baja</span>
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  value={productPriority}
+                  onChange={(e) => setProductPriority(parseInt(e.target.value, 10))}
+                  className="flex-grow appearance-none h-2 bg-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-gray-600 text-sm">Alta</span>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row justify-end mt-4 gap-2">
+              <Button onClick={handleCancelDuplicate} className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg shadow-md w-full sm:w-auto">Cancelar</Button>
+              <Button
+                onClick={() => {
+                  if (existingProduct) {
+                    onUpdateQuantity(existingProduct.id, existingProduct.quantity + 1);
+                    existingProduct.categoria = productCategory;
+                    existingProduct.prioridad = productPriority;
+                  }
+                  setIsDuplicate(false);
+                  setExistingProduct(null);
+                  setProductName('');
+                }}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md w-full sm:w-auto"
+              >
+                Confirmar
+              </Button>
             </div>
           </div>
         </DialogContent>
