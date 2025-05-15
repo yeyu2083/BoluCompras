@@ -299,17 +299,14 @@ const AddProductForm: React.FC<AddProductFormProps & { products: Product[]; onUp
             {isTableVisible ? 'Cerrar Lista' : 'Ver Lista'}
           </span>
         </Button>
-      </div>
-        {isDuplicate && (
+      </div>        {isDuplicate && (
         <Dialog open={isDuplicate}>
-          <div className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-md flex items-center justify-center animate-in fade-in duration-300 overflow-auto py-8">
-            <div className="w-[95%] max-w-md sm:max-w-lg mx-auto animate-in zoom-in-95 duration-300 slide-in-from-bottom-4"
+          <div className="fixed inset-0 z-[9998] bg-black/40 flex items-center justify-center animate-in fade-in duration-300 overflow-auto py-8">
+            <div className="w-[95%] max-w-md sm:max-w-lg mx-auto backdrop-blur-sm animate-in zoom-in-95 duration-300 slide-in-from-bottom-4"
               onClick={(e) => e.stopPropagation()}
-              style={{transform: 'translateY(0)'}}
-            >
-              <DialogContent className="relative rounded-3xl shadow-[0_25px_65px_-15px_rgba(0,0,0,0.8)] border-2 border-blue-400/80 bg-white overflow-hidden p-0">
-                <div className="bg-gradient-to-r from-blue-600 to-green-600 h-16 w-full absolute top-0 left-0 opacity-95"></div>
-                <DialogTitle className="text-2xl font-extrabold text-white relative z-10 mt-3 mb-10 tracking-tight text-center drop-shadow-lg">{editMode ? 'Editar producto' : 'Producto duplicado'}</DialogTitle>
+            >              <DialogContent className="relative rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] border-2 border-blue-300 bg-white overflow-hidden p-0">
+                <div className="bg-gradient-to-r from-blue-600 to-green-600 h-16 w-full absolute top-0 left-0 opacity-90"></div>
+                <DialogTitle className="text-2xl font-extrabold text-white relative z-10 mt-3 mb-10 tracking-tight text-center drop-shadow-md">{editMode ? 'Editar producto' : 'Producto duplicado'}</DialogTitle>
                 <button
                   type="button"
                   aria-label="Cerrar"
