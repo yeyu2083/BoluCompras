@@ -31,8 +31,6 @@ export default function Home() {
   const [productName, setProductName] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false); // Loading state for adding product
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para el modal
-  const [productToAdd, setProductToAdd] = useState<Product | null>(null); // Producto a agregar
   const { toast } = useToast();
   const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]); // State to store fetched products
   const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
@@ -41,83 +39,7 @@ export default function Home() {
   const [productCategory, setProductCategory] = useState("General"); // Estado para la categoría
   const [productPriority, setProductPriority] = useState(1); // Estado para la prioridad
   const [showTable, setShowTable] = useState(false); // Estado para mostrar/ocultar la tabla
-
-  // Function to handle the actual sending to n8n and updating local state
-  const proceedWithAddingProduct = async (productToProcess: Product) => {
-    setIsLoading(true);
-    let optimisticUpdateApplied = false;
-    let previousProductsState = products;
-
-    // Apply optimistic update first
-    setProducts((currentProducts) => {
-       previousProductsState = currentProducts;
-       const existingProductIndex = currentProducts.findIndex(
-         (p) =>
-           p.name.toLowerCase() === productToProcess.name.toLowerCase()
-       );
-
-       if (existingProductIndex > -1) {
-         const updatedProducts = [...currentProducts];
-         updatedProducts[existingProductIndex].quantity += 1;
-         return updatedProducts;
-       } else {
-         return [...currentProducts, { ...productToProcess, quantity: 1 }];
-       }
-     });
-    optimisticUpdateApplied = true;
-    setProductName("");
-
-    try {
-      // Prepare data payload including default category and priority
-      const payload = {
-        name: productToProcess.name,  // Cambiado de 'producto' a 'name'
-        quantity: 1,                      // Añadido campo 'quantity' que faltaba
-        categoria: 'General',             // Cambiado de 'category' a 'categoria'
-        prioridad: 1
-      };
-      // console.log("Sending payload:", JSON.stringify(payload)); // Uncomment for debugging
-
-      const response = await fetch('/api/products', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // Send the full payload
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API request failed with status: ${response.status}`);
-      }
-
-      toast({
-        title: "Success!",
-        description: `Product "${productToProcess.name}" processed.`,
-        variant: "default",
-      });
-
-      // Optional: await fetchProducts(); // Refetch after success if needed
-
-    } catch (error) {
-      console.error("Error sending data to API:", error);
-      toast({
-        title: "API Error",
-        description: "Could not save product changes. Reverting local state.",
-        variant: "destructive",
-      });
-
-      if (optimisticUpdateApplied) {
-         setProducts(previousProductsState);
-      }
-
-    } finally {
-      setIsLoading(false);
-      setIsModalOpen(false);
-      setProductToAdd(null);
-      setProductCategory("General"); // Reset category to default
-      setProductPriority(1); // Reset priority to default
-    }
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para el modal
 
   // Prepare to add product (check existence, open modal if needed)
   const handleAddProductClick = async (name: string, category: string, priority: number) => {
@@ -192,62 +114,6 @@ export default function Home() {
     setProductPriority(1); // Reset priority to default
   };
 
-  // Handle Enter key press in the input field
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      handleAddProductClick(productName, productCategory, productPriority);
-    }
-  };
-
-  // Handle confirmation from the modal
-  const handleModalConfirm = async () => {
-    if (stagedProduct) {
-      try {
-        // Realizar la solicitud PATCH al backend
-        const response = await fetch(`/api/products/${stagedProduct.id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ quantity: stagedProduct.quantity + 1 }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Error al actualizar el producto en el backend.");
-        }
-
-        // Actualizar en el estado local
-        setFetchedProducts((prevProducts) =>
-          prevProducts.map((product) =>
-            product.id === stagedProduct.id
-              ? { ...product, quantity: product.quantity + 1 }
-              : product
-          )
-        );
-
-        toast({
-          title: "Cantidad actualizada",
-          description: `La cantidad del producto "${stagedProduct.name}" se incrementó.`,
-        });
-      } catch (error) {
-        console.error("Error al actualizar el producto:", error);
-        toast({
-          title: "Error",
-          description: "No se pudo actualizar el producto en el backend.",
-          variant: "destructive",
-        });
-      }
-    }
-    setIsModalOpen(false);
-    setStagedProduct(null); // Limpiar el estado temporal
-  };
-
-  // Handle cancellation from the modal
-  const handleModalCancel = () => {
-    setIsModalOpen(false);
-    setStagedProduct(null); // Limpiar el estado temporal sin realizar cambios
-  };
-
   const fetchProducts = async (page = 1) => {
     try {
       const response = await fetch(`/api/products?page=${page}&limit=${limit}`); // Enviar parámetros de paginación
@@ -286,6 +152,15 @@ export default function Home() {
   };
 
   const handleUpdateQuantity = async (id: number, newQuantity: number) => {
+    if (newQuantity < 0) {
+      toast({
+        title: "Error",
+        description: "La cantidad no puede ser negativa.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const response = await fetch(`/api/products/${id}`, {
         method: "PATCH",
@@ -406,6 +281,7 @@ export default function Home() {
             isTableVisible={showTable}
             products={fetchedProducts} // Pasar la lista de productos
             onUpdateQuantity={handleUpdateQuantity} // Pasar la función para actualizar cantidades
+            onUpdatePurchased={handleUpdatePurchased} // Agregar esta línea
           />
         </CardContent>
       </Card>

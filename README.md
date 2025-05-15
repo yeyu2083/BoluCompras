@@ -69,6 +69,18 @@ Bolucompras List es una aplicación diseñada para gestionar listas de compras m
 3. **Alternar Lista**:
    - Usa el botón "Ver Lista" o "Cerrar Lista" para mostrar u ocultar la tabla de productos.
 
+## Reglas de Negocio
+
+Las siguientes reglas de negocio se aplican en la aplicación Bolucompras List:
+
+1. **Nombres de Productos Únicos**: No se permiten productos con nombres duplicados en la lista. Si se intenta agregar un producto con un nombre ya existente, se incrementará la cantidad del producto existente en lugar de agregar un duplicado.
+
+2. **Cantidad No Negativa**: La cantidad de un producto no puede ser negativa. Si se intenta establecer una cantidad negativa, se mostrará un mensaje de error y no se aplicará el cambio.
+
+3. **Rango de Prioridad**: La prioridad de un producto debe estar dentro del rango de 1 a 5. Cualquier valor fuera de este rango será rechazado.
+
+Estas reglas aseguran la integridad de los datos y mejoran la experiencia del usuario al gestionar su lista de compras.
+
 ## Tecnologías Utilizadas
 
 ### Frontend
