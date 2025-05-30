@@ -15,26 +15,32 @@ import AddProductForm from './components/AddProductForm';
 import ProductList from './components/ProductList';
 
 interface Product {
-  id: number;
-  name: string; // Cambiado de "producto" a "name"
+  id: string;
+  _id?: string;
+  name: string;
   precio: number | null;
   cantidad_predeterminada: number;
-  quantity: number; // Cambiado de "cantidad" a "quantity"
+  quantity: number;
   categoria: string;
   prioridad: number;
-  purchased: boolean; // Cambiado de "comprado" a "purchased"
-  createdAt: string; // Cambiado de "creado_en" a "createdAt"
-  updatedAt: string; // Cambiado de "actualizado_en" a "updatedAt"
+  purchased: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface UpdateOptions {
+  categoria?: string;
+  prioridad?: number;
 }
 
 export default function Home() {
   const [productName, setProductName] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false); // Loading state for adding product
-  const { toast } = useToast();
-  const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]); // State to store fetched products
+  const { toast } = useToast();  const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]); // State to store fetched products
   const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
-  const limit = 10; // Límite de productos por página
+  const [totalPages, setTotalPages] = useState(1); // Estado para el total de páginas
+  const limit = 6; // Límite de productos por página
   const [stagedProduct, setStagedProduct] = useState<Product | null>(null); // Estado temporal para el producto duplicado
   const [productCategory, setProductCategory] = useState("General"); // Estado para la categoría
   const [productPriority, setProductPriority] = useState(1); // Estado para la prioridad
@@ -66,18 +72,16 @@ export default function Home() {
     if (existingProduct) {
       setStagedProduct(existingProduct); // Guardar en estado temporal
       setIsModalOpen(true);
-    } else {
-      const newProduct: Product = {
-        id: Date.now(),
-        name: trimmedName, // Cambiado de "producto" a "name"
+    } else {      const newProduct = {
+        name: trimmedName,
         precio: null,
         cantidad_predeterminada: 1,
-        quantity: 1, // Cambiado de "cantidad" a "quantity"
-        categoria: category, // Usar la categoría seleccionada
-        prioridad: priority, // Usar la prioridad seleccionada
-        purchased: false, // Cambiado de "comprado" a "purchased"
-        createdAt: new Date().toISOString(), // Cambiado de "creado_en" a "createdAt"
-        updatedAt: new Date().toISOString() // Cambiado de "actualizado_en" a "updatedAt"
+        quantity: 1,
+        categoria: category,
+        prioridad: priority,
+        purchased: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
 
       // Actualizar en el backend
@@ -88,14 +92,14 @@ export default function Home() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(newProduct),
-        });
-
-        if (!response.ok) {
+        });        if (!response.ok) {
           throw new Error("Error al agregar el producto en el backend.");
         }
 
+        // Obtener el producto con el ID asignado por MongoDB
+        const savedProduct = await response.json();
         // Actualizar en el estado local
-        setFetchedProducts((prevProducts) => [...prevProducts, newProduct]);
+        setFetchedProducts((prevProducts) => [...prevProducts, savedProduct]);
         toast({
           title: "Producto agregado",
           description: `El producto "${trimmedName}" se agregó a la lista.`,
@@ -119,9 +123,9 @@ export default function Home() {
       const response = await fetch(`/api/products?page=${page}&limit=${limit}`); // Enviar parámetros de paginación
       if (!response.ok) {
         throw new Error(`Failed to fetch products: ${response.status}`);
-      }
-      const data = await response.json();
+      }      const data = await response.json();
       setFetchedProducts(data.data); // Ajustado para acceder a la clave 'data' en la respuesta
+      setTotalPages(data.totalPages); // Guardar el total de páginas
     } catch (error) {
       console.error("Error fetching products:", error);
       toast({
@@ -149,9 +153,7 @@ export default function Home() {
       }
       return prevPage;
     });
-  };
-
-  const handleUpdateQuantity = async (id: number, newQuantity: number) => {
+  }; const handleUpdateQuantity = async (id: string, newQuantity: number, options?: UpdateOptions) => {
     if (newQuantity < 0) {
       toast({
         title: "Error",
@@ -162,34 +164,59 @@ export default function Home() {
     }
 
     try {
+      console.log('=== handleUpdateQuantity ===');
+      console.log('ID recibido:', id);
+      console.log('Nueva cantidad:', newQuantity);
+      console.log('Opciones:', options);
+
       const response = await fetch(`/api/products/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ quantity: newQuantity }),
+        body: JSON.stringify({ 
+          quantity: newQuantity,
+          ...options
+        }),
       });
 
       if (!response.ok) {
-        throw new Error("Error al actualizar la cantidad en el backend.");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al actualizar la cantidad.");
       }
 
-      setFetchedProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.id === id ? { ...product, quantity: newQuantity } : product
+      const updatedProduct = await response.json();
+      console.log('Respuesta del servidor:', updatedProduct);
+      
+      setFetchedProducts(prevProducts =>
+        prevProducts.map(product =>
+          (product.id === id || product._id === id)
+            ? { 
+                ...product, 
+                ...updatedProduct,
+                quantity: newQuantity,
+                ...(options?.categoria && { categoria: options.categoria }),
+                ...(options?.prioridad && { prioridad: options.prioridad })
+              } 
+            : product
         )
       );
+
+      toast({
+        title: "Éxito",
+        description: "Producto actualizado correctamente",
+        variant: "default",
+      });
     } catch (error) {
       console.error("Error al actualizar la cantidad:", error);
       toast({
         title: "Error",
-        description: "No se pudo actualizar la cantidad.",
+        description: error instanceof Error ? error.message : "No se pudo actualizar la cantidad.",
         variant: "destructive",
       });
     }
   };
-
-  const handleUpdatePurchased = async (id: number, purchased: boolean) => {
+  const handleUpdatePurchased = async (id: string, purchased: boolean) => {
     try {
       const response = await fetch(`/api/products/${id}`, {
         method: "PATCH",
@@ -201,11 +228,14 @@ export default function Home() {
 
       if (!response.ok) {
         throw new Error("Error al actualizar el estado de purchased en el backend.");
-      }
-
+      }      // Obtener la respuesta actualizada del servidor
+      const updatedProduct = await response.json();
+      
       setFetchedProducts((prevProducts) =>
         prevProducts.map((product) =>
-          product.id === id ? { ...product, purchased } : product
+          (product.id === id || product._id === id)
+            ? { ...product, ...updatedProduct, purchased }
+            : product
         )
       );
     } catch (error) {
@@ -217,8 +247,7 @@ export default function Home() {
       });
     }
   };
-
-  const handleDeleteProduct = async (id: number) => {
+  const handleDeleteProduct = async (id: string) => {
     try {
       const response = await fetch(`/api/products/${id}`, {
         method: "DELETE",
@@ -226,10 +255,10 @@ export default function Home() {
 
       if (!response.ok) {
         throw new Error("Error al eliminar el producto en el backend.");
-      }
-
-      setFetchedProducts((prevProducts) =>
-        prevProducts.filter((product) => product.id !== id)
+      }      setFetchedProducts((prevProducts) =>
+        prevProducts.filter((product) => 
+          product.id !== id && product._id !== id
+        )
       );
 
       toast({
@@ -282,12 +311,9 @@ export default function Home() {
             products={fetchedProducts} // Pasar la lista de productos
             onUpdateQuantity={handleUpdateQuantity} // Pasar la función para actualizar cantidades
             onUpdatePurchased={handleUpdatePurchased} // Agregar esta línea
-          />
-        </CardContent>
-      </Card>
-
-      {showTable ? (
-        <div className="flex flex-col items-center">
+          />        </CardContent>
+      </Card>      {showTable && (
+        <div className="flex flex-col items-center w-full max-w-4xl mx-auto mt-8 bg-white/10 backdrop-blur-lg rounded-lg p-6 shadow-xl">
           <ProductList
             products={fetchedProducts}
             onUpdateQuantity={handleUpdateQuantity}
@@ -296,9 +322,10 @@ export default function Home() {
             onNextPage={handleNextPage}
             onPreviousPage={handlePreviousPage}
             currentPage={currentPage}
+            totalPages={totalPages}
           />
         </div>
-      ) : null}
+      )}
     </main>
   );
 }
