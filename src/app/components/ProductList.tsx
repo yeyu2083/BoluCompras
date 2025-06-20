@@ -55,9 +55,9 @@ const ProductList: React.FC<ProductListProps> = ({
       </h2>
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 place-items-center">
         {products.length > 0 ? (
-          products.map((product) => (
-            <div
+          products.map((product) => (            <div
               key={getProductId(product)}
+              data-testid={`product-card-${getProductId(product)}`}
               className="bg-white bg-opacity-95 backdrop-blur-sm text-gray-800 rounded-2xl shadow-lg p-6 border border-blue-100 hover:shadow-2xl hover:border-blue-300 transform hover:-translate-y-1 transition-all duration-300 w-full max-w-sm mx-auto relative overflow-hidden group"
             >
               {product.purchased && (
@@ -65,12 +65,17 @@ const ProductList: React.FC<ProductListProps> = ({
                   ✓ Comprado
                 </div>
               )}
-              <h3 className="text-xl font-bold mb-4 text-center text-blue-800 group-hover:text-blue-600 transition-colors">{product.name}</h3>
+              <h3 
+                data-testid={`product-name-${getProductId(product)}`}
+                className="text-xl font-bold mb-4 text-center text-blue-800 group-hover:text-blue-600 transition-colors"
+              >
+                {product.name}
+              </h3>
               <div className="space-y-4">
                 <div className={`bg-blue-50 rounded-xl p-4 transform transition-all duration-300 ${loadingQuantity === getProductId(product) ? 'animate-pulse' : 'hover:scale-105'}`}>
-                  <div className="flex justify-center items-center gap-4">
-                    <button
+                  <div className="flex justify-center items-center gap-4">                    <button
                       onClick={() => handleQuantityUpdate(getProductId(product), product.quantity - 1)}
+                      data-testid={`decrease-quantity-${getProductId(product)}`}
                       className="w-8 h-8 rounded-full bg-blue-100 hover:bg-blue-200 flex items-center justify-center text-blue-600 transition-colors"
                       disabled={loadingQuantity === getProductId(product)}
                     >
@@ -78,14 +83,16 @@ const ProductList: React.FC<ProductListProps> = ({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                       </svg>
                     </button>
-                    <p className="text-center">
-                      <span className={`text-3xl font-bold text-blue-600 transition-all duration-300 ${loadingQuantity === getProductId(product) ? 'opacity-50' : ''}`}>
+                    <p className="text-center">                      <span 
+                        data-testid={`quantity-value-${getProductId(product)}`}
+                        className={`text-3xl font-bold text-blue-600 transition-all duration-300 ${loadingQuantity === getProductId(product) ? 'opacity-50' : ''}`}
+                      >
                         {product.quantity}
                       </span>
                       <span className="text-sm text-gray-600 ml-2">unidades</span>
-                    </p>
-                    <button
+                    </p>                    <button
                       onClick={() => handleQuantityUpdate(getProductId(product), product.quantity + 1)}
+                      data-testid={`increase-quantity-${getProductId(product)}`}
                       className="w-8 h-8 rounded-full bg-blue-100 hover:bg-blue-200 flex items-center justify-center text-blue-600 transition-colors"
                       disabled={loadingQuantity === getProductId(product)}
                     >
@@ -101,8 +108,7 @@ const ProductList: React.FC<ProductListProps> = ({
                     <p className="font-semibold text-gray-800 truncate" title={product.categoria}>{product.categoria}</p>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors">
-                    <p className="text-gray-500 text-sm">Prioridad</p>
-                    <p className="font-semibold text-gray-800 flex flex-wrap gap-0.5">
+                    <p className="text-gray-500 text-sm">Prioridad</p>                    <p className="font-semibold text-gray-800 flex flex-wrap gap-0.5" data-testid={`priority-${getProductId(product)}`}>
                       {Array.from({ length: product.prioridad }).map((_, index) => (
                         <span key={index} className="text-amber-400">⭐</span>
                       ))}
@@ -113,9 +119,9 @@ const ProductList: React.FC<ProductListProps> = ({
                   Creado: {new Date(product.createdAt).toLocaleDateString()}
                 </div>
               </div>
-              <div className="flex flex-wrap justify-center gap-3 mt-6">
-                <button
+              <div className="flex flex-wrap justify-center gap-3 mt-6">                <button
                   onClick={() => onUpdatePurchased(getProductId(product), !product.purchased)}
+                  data-testid={`purchase-status-${getProductId(product)}`}
                   className={`px-4 py-2 font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2
                     ${product.purchased 
                       ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white' 
@@ -137,9 +143,9 @@ const ProductList: React.FC<ProductListProps> = ({
                       <span>Pendiente</span>
                     </>
                   )}
-                </button>
-                <button
+                </button>                <button
                   onClick={() => onDeleteProduct(getProductId(product))}
+                  data-testid={`delete-product-${getProductId(product)}`}
                   className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,9 +169,9 @@ const ProductList: React.FC<ProductListProps> = ({
       {totalPages > 1 && (
         <div className="mt-12 flex flex-col items-center gap-4">
           <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md">
-            <button
-              onClick={onPreviousPage}
+            <button              onClick={onPreviousPage}
               disabled={currentPage <= 1}
+              data-testid="previous-page"
               className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
               aria-label="Página anterior"
             >
@@ -176,9 +182,9 @@ const ProductList: React.FC<ProductListProps> = ({
             <span className="px-4 font-medium text-gray-700">
               Página {currentPage} de {totalPages}
             </span>
-            <button
-              onClick={onNextPage}
+            <button              onClick={onNextPage}
               disabled={currentPage >= totalPages}
+              data-testid="next-page"
               className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
               aria-label="Página siguiente"
             >

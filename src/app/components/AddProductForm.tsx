@@ -44,8 +44,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
   isTableVisible, 
   products, 
   onUpdateQuantity 
-}) => {
-  const [productName, setProductName] = useState('');
+}) => {  const [productName, setProductName] = useState('');
   const [productCategory, setProductCategory] = useState('General');
   const [productPriority, setProductPriority] = useState(1);
   const [isDuplicate, setIsDuplicate] = useState(false);
@@ -180,10 +179,10 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
   
   return (
     <div className="w-full max-w-md mx-auto sm:max-w-lg md:max-w-xl lg:max-w-2xl">
-      <div className="relative">
-        <Input
+      <div className="relative">        <Input
           type="text"
           placeholder="Ingresa el nombre del producto..."
+          data-testid="product-name-input"
           value={productName}
           onChange={(e) => {
             const value = e.target.value;
@@ -304,11 +303,10 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
       {!editMode && !existingProduct && (
         <>
           <div className="mt-4">
-            <label htmlFor="category" className="block text-gray-300 mb-2 font-semibold">Categoría</label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {categories.map((category) => (
-                <button
+            <label htmlFor="category" className="block text-gray-300 mb-2 font-semibold">Categoría</label>            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2" data-testid="category-buttons-container">
+              {categories.map((category) => (<button
                   key={category}
+                  data-testid={`category-button-${category}`}
                   onClick={() => setProductCategory(category)}
                   className={`px-4 py-2 rounded-lg shadow-md font-semibold transition-transform transform hover:scale-105 w-full text-center ${
                     productCategory === category
@@ -324,11 +322,11 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
           <div className="mt-4">
             <label className="block text-gray-300 mb-2 font-semibold">Prioridad</label>
             <div className="flex items-center gap-4">
-              <span className="text-gray-300 text-sm">Baja</span>
-              <input
+              <span className="text-gray-300 text-sm">Baja</span>              <input
                 type="range"
                 min="1"
                 max="5"
+                data-testid="priority-slider"
                 value={productPriority}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setProductPriority(parseInt(e.target.value, 10))}
                 className="flex-grow appearance-none h-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -340,7 +338,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
       )}
       
       <div className="flex flex-col sm:flex-row justify-between mt-4 gap-4">
-        <Button
+        <Button          data-testid="add-product-button"
           onClick={() => {
             if (editMode && existingProduct) {
               setIsDuplicate(true);
@@ -379,9 +377,9 @@ const AddProductForm: React.FC<AddProductFormProps> = ({
               </>
             )}
           </span>
-        </Button>
-        <Button
+        </Button>        <Button
           onClick={onToggleList}
+          data-testid="toggle-list-button"
           className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto border border-blue-400 hover:border-purple-500 transform hover:-translate-y-[2px]"
         >
           <span className="flex items-center justify-center">
