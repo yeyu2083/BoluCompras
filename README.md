@@ -1,6 +1,13 @@
 # Bolucompras List
 
-Bolucompras List es una aplicación diseñada para gestionar listas de compras mensuales de manera eficiente. La aplicación permite a los usuarios agregar productos, manejar duplicados y sincronizar los datos con un backend basado en Express, n8n para funcionalidades avanzadas y una base de datos MongoDB.
+![Logo de Bolucompras](public/images/bolucompras-logo.png)
+
+Bolucompras List es una aplicación moderna y eficiente para gestionar listas de compras mensuales. Con una interfaz intuitiva y hermosa, permite a los usuarios gestionar sus productos de forma sencilla, con funcionalidades avanzadas como manejo de duplicados, categorización, y priorización de productos.
+
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 
 ## Características Principales
 
