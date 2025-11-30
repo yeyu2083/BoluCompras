@@ -1,93 +1,169 @@
-# Propuesta Técnica para Bolucompras  
-**Roadmap por Fases**  
+# BoluCompras - Roadmap Actualizado
+**Estado Actual y Próximas Fases**
 
 ---
 
-## Fase 1: Base de Datos y Gestión de Productos  
-### Objetivo  
-Evitar duplicados, manejar la lista desde el backend y mejorar la UX con modales.  
+## ✅ Fase 1: Base de Datos y Gestión de Productos (COMPLETADA)
+### Logros Alcanzados
+#### Backend (Express + MongoDB)
+- ✅ **API REST implementada con Express**
+- ✅ **Integración con MongoDB**:
+  - Esquema de productos con validación
+  - Operaciones CRUD completas
+- ✅ **Endpoints funcionales**:
+  - GET `/products`: Listado con paginación
+  - POST `/products`: Creación con validación
+  - PUT `/products/:id`: Actualización de estado y cantidad
+  - DELETE `/products/:id`: Eliminación de productos
 
-### Tareas  
-#### Backend (n8n/Postgres)  
-- **Nuevo Endpoint GET `/products`:**  
-  - Consulta todos los productos desde Postgres.  
-- **Modificar Webhook POST `/add-product`:**  
-  - Validar existencia del producto con `SELECT * FROM products WHERE name = '[nombre]'`.  
-  - Retornar `409 Conflict` si existe, `201 Created` si se inserta.  
+#### Frontend (Next.js + Tailwind)
+- ✅ **UI/UX Mejorada**:
+  - Cards con diseño moderno y gradientes
+  - Animaciones y transiciones fluidas
+  - Diseño responsive completo
+- ✅ **Componentes Implementados**:
+  - Lista de productos con paginación (6 por página)
+  - Formulario de agregar con validación
+  - Sistema de prioridad con estrellas
+  - Indicadores de estado (comprado/pendiente)
 
-#### Frontend (React)  
-- **Integrar Llamada GET:** Actualizar lista automáticamente tras agregar un producto.  
-- **Modales de Feedback:**  
-  - *Éxito*: "Producto agregado ✅".  
-  - *Error*: "Producto duplicado 🚨".  
-- **Mejoras de Formulario:**  
-  - Limpiar input después de enviar.  
-  - Validación en tiempo real (ej: evitar campos vacíos).  
-
-### Tecnologías  
-- **Backend:** n8n, Postgres.  
-- **Frontend:** React (useState/useEffect), react-modal/Material-UI.  
-
----
-
-## Fase 2: Integración de IA para Sugerencias  
-### Objetivo  
-Ofrecer sugerencias de productos usando inteligencia artificial.  
-
-### Tareas  
-#### Backend (n8n + API Externa)  
-- **Endpoint `/suggest-products`:**  
-  - Integrar API de IA (OpenAI/Gemini) para generar sugerencias.  
-  - Ejemplo de prompt: *"Sugiere 5 productos relacionados con [producto]"*.  
-
-#### Frontend  
-- **Componente de Sugerencias:**  
-  - Dropdown/modal con sugerencias al escribir en el input (usar debounce).  
-  - Botón "Agregar" para insertar sugerencias directamente.  
-
-### Tecnologías  
-- **IA:** OpenAI API (gpt-3.5-turbo) o Hugging Face.  
-- **Frontend:** react-autocomplete.  
+#### Testing (Playwright)
+- ✅ **Tests E2E Robustos**:
+  - Page Object Model implementado
+  - Tests de agregar productos
+  - Validación de prioridades
+  - Pruebas de interacción con slider
 
 ---
 
-## Fase 3: Métricas y Mejoras Finales  
-### Objetivo  
-Analizar hábitos de compra y escalar la aplicación.  
+## Fase 2: Automatización, IA y Alertas Inteligentes
+### Objetivos
+- Implementar sistema de alertas de ofertas
+- Integrar con APIs de supermercados
+- Automatizar notificaciones personalizadas
+- Mejorar la experiencia del usuario con IA
 
-### Tareas  
-#### Métricas Mensuales  
-- **Nueva Tabla en Postgres:** Almacenar fecha, cantidad y categoría (opcional).  
-- **Endpoint GET `/metrics`:**  
-  - Datos como "productos más comprados" o "gasto mensual".  
-- **Dashboard en React:** Gráficos con Chart.js o ApexCharts.  
+### Tareas Planificadas
+#### Automatización con n8n
+- **Workflows de Ofertas**:
+  - Integración con APIs de supermercados (ej: Walmart, Coto, Carrefour)
+  - Scraping periódico de ofertas
+  - Comparación de precios entre tiendas
+- **Sistema de Notificaciones**:
+  - Webhook para WhatsApp Business API
+  - Alertas personalizadas por categoría
+  - Notificaciones de ofertas relevantes
 
-#### Mejoras Adicionales  
-- **Autenticación:** Soporte para múltiples usuarios (Firebase Auth/JWT).  
-- **Categorías:** Agrupar productos (ej: "Lácteos", "Limpieza").  
-- **Optimización:** Cache con Redis o paginación.  
+#### IA y Recomendaciones (OpenAI + n8n)
+- **Procesamiento Inteligente**:
+  - Análisis de ofertas con GPT para relevancia
+  - Clasificación automática de productos
+  - Predicción de próximas ofertas
+- **Sugerencias Contextuales**:
+  - Recomendaciones basadas en historial
+  - Alternativas más económicas
+  - Combinaciones de ofertas óptimas
 
-### Tecnologías  
-- **Backend:** Postgres, Redis.  
-- **Frontend:** Chart.js/ApexCharts, Firebase.  
+#### Frontend (Next.js)
+- **Panel de Preferencias**:
+  - Configuración de alertas por producto/categoría
+  - Umbrales de precio para notificaciones
+  - Selección de supermercados preferidos
+- **Vista de Ofertas**:
+  - Comparador de precios integrado
+  - Historial de precios por producto
+  - Visualización de tendencias
+
+#### Integración n8n
+- **Workflows Automatizados**:
+  ```mermaid
+  graph LR
+    A[API Supermercados] --> B[n8n]
+    B --> C[OpenAI]
+    C --> D[WhatsApp]
+    D --> E[Usuario]
+  ```
+- **Triggers Configurables**:
+  - Horarios específicos
+  - Cambios significativos de precio
+  - Nuevas ofertas en categorías seguidas
+
+#### Testing
+- **Tests E2E Extendidos**:
+  - Simulación de workflows n8n
+  - Validación de notificaciones
+  - Pruebas de integración con APIs
+- **Monitoreo**:
+  - Logs de notificaciones enviadas
+  - Métricas de efectividad de ofertas
+  - Tiempo de respuesta de APIs
 
 ---
 
-## Roadmap Resumido  
-| Fase | Duración Estimada | Entregables |  
-|------|-------------------|-------------|  
-| 1    | 2-3 semanas       | Validación de productos, modales, lista backend. |  
-| 2    | 3-4 semanas       | Sugerencias con IA, componente interactivo. |  
-| 3    | 4-6 semanas       | Dashboard, autenticación, optimizaciones. |  
+## Fase 3: Análisis y Funcionalidades Avanzadas
+### Objetivos
+- Implementar análisis de hábitos de compra
+- Añadir características para múltiples usuarios
+- Optimizar rendimiento y escalabilidad
+
+### Tareas Planificadas
+#### Backend
+- **Sistema de Métricas**:
+  - Agregación de datos en MongoDB
+  - Endpoints para estadísticas
+  - Histórico de compras
+- **Autenticación y Autorización**:
+  - JWT para manejo de sesiones
+  - Roles de usuario (admin/regular)
+  - Listas compartidas
+
+#### Frontend
+- **Dashboard Analítico**:
+  - Gráficos con Chart.js
+  - Estadísticas de uso
+  - Reportes exportables
+- **Características Premium**:
+  - Listas múltiples
+  - Compartir listas
+  - Notificaciones
+
+#### Infraestructura
+- **Optimizaciones**:
+  - Caché con MongoDB
+  - Optimización de queries
+  - Compresión de respuestas
 
 ---
 
-## Recomendaciones Clave  
-✅ **Pruebas:**  
-   - Tests unitarios (Jest) y E2E (Playwright).  
-✅ **Seguridad:**  
-   - Sanitizar inputs SQL para evitar inyecciones.  
-✅ **Deploy:**  
-   - Usar Render (backend) y Vercel (frontend).  
+## Timeline Actualizado
+| Fase | Estado | Entregables Principales |
+|------|--------|------------------------|
+| 1 | ✅ Completada | • API REST con MongoDB<br>• UI/UX moderna<br>• Tests E2E |
+| 2 | 🏗️ Próxima | • Sugerencias IA<br>• Búsqueda avanzada<br>• Modo oscuro |
+| 3 | 📅 Planificada | • Dashboard<br>• Multi-usuario<br>• Optimizaciones |
 
-¡Listo para implementar! 🛒🚀
+---
+
+## Stack Tecnológico Actual
+### Backend
+- Express.js
+- MongoDB
+- JWT (próximo)
+
+### Frontend
+- Next.js 13+
+- Tailwind CSS
+- Shadcn/ui
+- Chart.js (próximo)
+
+### Testing
+- Playwright
+- Page Object Model
+- GitHub Actions (CI/CD)
+
+### Infraestructura
+- Vercel (Frontend)
+- Railway/Render (Backend)
+- MongoDB Atlas
+
+¡En progreso y mejorando! 🚀

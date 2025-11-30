@@ -1,8 +1,6 @@
 'use client'; // <-- ADD THIS DIRECTIVE AT THE VERY TOP
 
 import { useState, useEffect } from 'react';
-
-
 import {
   Card,
   CardContent,
@@ -10,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import Image from 'next/image'; // Import Image component from Next.js
+import Image from 'next/image';
 import AddProductForm from './components/AddProductForm';
 import ProductList from './components/ProductList';
 
@@ -37,7 +35,8 @@ export default function Home() {
   const [productName, setProductName] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false); // Loading state for adding product
-  const { toast } = useToast();  const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]); // State to store fetched products
+  const { toast } = useToast();
+  const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]); // State to store fetched products
   const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
   const [totalPages, setTotalPages] = useState(1); // Estado para el total de páginas
   const limit = 6; // Límite de productos por página
@@ -72,7 +71,8 @@ export default function Home() {
     if (existingProduct) {
       setStagedProduct(existingProduct); // Guardar en estado temporal
       setIsModalOpen(true);
-    } else {      const newProduct = {
+    } else {
+      const newProduct = {
         name: trimmedName,
         precio: null,
         cantidad_predeterminada: 1,
@@ -92,8 +92,10 @@ export default function Home() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(newProduct),
-        });        if (!response.ok) {
-          throw new Error("Error al agregar el producto en el backend.");
+        });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
         }
 
         // Obtener el producto con el ID asignado por MongoDB
@@ -106,9 +108,13 @@ export default function Home() {
         });
       } catch (error) {
         console.error("Error al agregar el producto:", error);
+        let errorMessage = "No se pudo agregar el producto en el backend.";
+        if (error instanceof Error) {
+          errorMessage += " Detalles: " + error.message;
+        }
         toast({
           title: "Error",
-          description: "No se pudo agregar el producto en el backend.",
+          description: errorMessage,
           variant: "destructive",
         });
       }
@@ -123,7 +129,8 @@ export default function Home() {
       const response = await fetch(`/api/products?page=${page}&limit=${limit}`); // Enviar parámetros de paginación
       if (!response.ok) {
         throw new Error(`Failed to fetch products: ${response.status}`);
-      }      const data = await response.json();
+      }
+      const data = await response.json();
       setFetchedProducts(data.data); // Ajustado para acceder a la clave 'data' en la respuesta
       setTotalPages(data.totalPages); // Guardar el total de páginas
     } catch (error) {
@@ -153,7 +160,9 @@ export default function Home() {
       }
       return prevPage;
     });
-  }; const handleUpdateQuantity = async (id: string, newQuantity: number, options?: UpdateOptions) => {
+  };
+
+  const handleUpdateQuantity = async (id: string, newQuantity: number, options?: UpdateOptions) => {
     if (newQuantity < 0) {
       toast({
         title: "Error",
@@ -174,7 +183,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           quantity: newQuantity,
           ...options
         }),
@@ -187,17 +196,17 @@ export default function Home() {
 
       const updatedProduct = await response.json();
       console.log('Respuesta del servidor:', updatedProduct);
-      
+
       setFetchedProducts(prevProducts =>
         prevProducts.map(product =>
           (product.id === id || product._id === id)
-            ? { 
-                ...product, 
-                ...updatedProduct,
-                quantity: newQuantity,
-                ...(options?.categoria && { categoria: options.categoria }),
-                ...(options?.prioridad && { prioridad: options.prioridad })
-              } 
+            ? {
+              ...product,
+              ...updatedProduct,
+              quantity: newQuantity,
+              ...(options?.categoria && { categoria: options.categoria }),
+              ...(options?.prioridad && { prioridad: options.prioridad })
+            }
             : product
         )
       );
@@ -216,6 +225,7 @@ export default function Home() {
       });
     }
   };
+
   const handleUpdatePurchased = async (id: string, purchased: boolean) => {
     try {
       const response = await fetch(`/api/products/${id}`, {
@@ -228,9 +238,10 @@ export default function Home() {
 
       if (!response.ok) {
         throw new Error("Error al actualizar el estado de purchased en el backend.");
-      }      // Obtener la respuesta actualizada del servidor
+      }
+      // Obtener la respuesta actualizada del servidor
       const updatedProduct = await response.json();
-      
+
       setFetchedProducts((prevProducts) =>
         prevProducts.map((product) =>
           (product.id === id || product._id === id)
@@ -247,6 +258,7 @@ export default function Home() {
       });
     }
   };
+
   const handleDeleteProduct = async (id: string) => {
     try {
       const response = await fetch(`/api/products/${id}`, {
@@ -255,8 +267,9 @@ export default function Home() {
 
       if (!response.ok) {
         throw new Error("Error al eliminar el producto en el backend.");
-      }      setFetchedProducts((prevProducts) =>
-        prevProducts.filter((product) => 
+      }
+      setFetchedProducts((prevProducts) =>
+        prevProducts.filter((product) =>
           product.id !== id && product._id !== id
         )
       );
@@ -282,7 +295,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-br from-green-400 via-blue-500 to-blue-600 text-gray-900 p-8 pt-16">
-      <Card className="w-full max-w-md shadow-2xl mb-8 bg-gradient-to-br from-gray-800 to-gray-700 rounded-lg border border-gray-600">
+      <Card className="w-full max-w-6xl shadow-2xl mb-8 bg-gradient-to-br from-gray-800 to-gray-700 rounded-lg border border-gray-600">
         <CardHeader>
           <div className="flex flex-col items-center">
             <Image
@@ -296,24 +309,29 @@ export default function Home() {
               Bienvenido a Bolucompras
             </CardTitle>
             <p className="text-center text-gray-300 mt-2 text-lg">
-              Tu lista de compras organizada y fácil de gestionar
+              Tu lista de compras inteligente
             </p>
           </div>
         </CardHeader>
         <CardContent>
-          <AddProductForm
-            onAddProduct={(name, category, priority) => {
-              handleAddProductClick(name, category, priority);
-            }}
-            isLoading={isLoading}
-            onToggleList={() => setShowTable((prev) => !prev)}
-            isTableVisible={showTable}
-            products={fetchedProducts} // Pasar la lista de productos
-            onUpdateQuantity={handleUpdateQuantity} // Pasar la función para actualizar cantidades
-            onUpdatePurchased={handleUpdatePurchased} // Agregar esta línea
-          />        </CardContent>
-      </Card>      {showTable && (
-        <div className="flex flex-col items-center w-full max-w-4xl mx-auto mt-8 bg-white/10 backdrop-blur-lg rounded-lg p-6 shadow-xl">
+          <div className="space-y-4">
+            <AddProductForm
+              onAddProduct={(name, category, priority) => {
+                handleAddProductClick(name, category, priority);
+              }}
+              isLoading={isLoading}
+              onToggleList={() => setShowTable((prev) => !prev)}
+              isTableVisible={showTable}
+              products={fetchedProducts}
+              onUpdateQuantity={handleUpdateQuantity}
+              onUpdatePurchased={handleUpdatePurchased}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {showTable && (
+        <div className="flex flex-col items-center w-full max-w-6xl mx-auto mt-8 bg-white/10 backdrop-blur-lg rounded-lg p-6 shadow-xl">
           <ProductList
             products={fetchedProducts}
             onUpdateQuantity={handleUpdateQuantity}

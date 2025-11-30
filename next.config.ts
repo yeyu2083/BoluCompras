@@ -1,7 +1,8 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: 'standalone',
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -22,12 +23,12 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/products',
-        destination: 'http://localhost:5000/api/products',
+        destination: 'http://backend:9002/api/products',
       },
       // Rewrite para operaciones con ID (PATCH, DELETE)
       {
         source: '/api/products/:id',
-        destination: 'http://localhost:5000/api/products/:id',
+        destination: 'http://backend:9002/api/products/:id',
       },
     ];
   },

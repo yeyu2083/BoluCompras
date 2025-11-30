@@ -1,0 +1,47 @@
+name: Ephemeral Environment
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  ephemeral-env:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and Start Services
+      run: |
+        docker-compose up -d --build
+        echo "Waiting for services to start..."
+        sleep 30
+
+    - name: Check Running Containers
+      run: docker ps -a
+
+    - name: Verify Backend Health
+      run: |
+        curl --fail http://localhost:9002/ || exit 1
+
+    - name: Verify Frontend Health
+      run: |
+        curl --fail http://localhost:3000/ || exit 1
+
+    - name: Run Smoke Tests (Example)
+      run: |
+        echo "Running smoke tests..."
+        # Add your actual tests here, e.g., using curl or a test runner
+        # For now, we just check if the pages are accessible
+        curl -I http://localhost:3000/
+        curl -I http://localhost:9002/
+
+    - name: Teardown
+      if: always()
+      run: docker-compose down

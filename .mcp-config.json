@@ -1,0 +1,14 @@
+{
+    "servers": {
+        "mongodb": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "mongodb-mcp-server"
+            ],
+            "env": {
+                "MONGODB_URI": "mongodb://localhost:27017/bolucompras"
+            }
+        }
+    }
+}
