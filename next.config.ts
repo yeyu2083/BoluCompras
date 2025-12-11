@@ -20,15 +20,16 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:9003';
     return [
       {
         source: '/api/products',
-        destination: 'http://backend:9002/api/products',
+        destination: `${backendUrl}/api/products`,
       },
       // Rewrite para operaciones con ID (PATCH, DELETE)
       {
         source: '/api/products/:id',
-        destination: 'http://backend:9002/api/products/:id',
+        destination: `${backendUrl}/api/products/:id`,
       },
     ];
   },
