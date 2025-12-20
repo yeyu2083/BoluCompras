@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:9003';
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:9002';
     return [
       {
         source: '/api/products',

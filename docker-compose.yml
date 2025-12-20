@@ -1,14 +1,15 @@
 version: '3.8'
 
 services:
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - app-network
+  # MongoDB local comentado - ahora usamos Atlas
+  # mongo:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongo-data:/data/db
+  #   networks:
+  #     - app-network
 
   backend:
     build:
@@ -17,10 +18,9 @@ services:
     ports:
       - "9002:9002"
     environment:
-      - MONGO_URI=mongodb://mongo:27017/bolucompras
+      # MongoDB Atlas Connection
+      - MONGO_URI=mongodb+srv://yesiwindecker:yeyu2025@bolucompras.si6oltd.mongodb.net/bolucompras?retryWrites=true&w=majority&appName=Bolucompras
       - PORT=9002
-    depends_on:
-      - mongo
     networks:
       - app-network
 
@@ -28,10 +28,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - BACKEND_URL=http://backend:9002
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:9002/api
+      - BACKEND_URL=http://backend:9002
     depends_on:
       - backend
     networks:

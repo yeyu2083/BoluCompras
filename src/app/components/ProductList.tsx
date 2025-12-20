@@ -49,8 +49,8 @@ const ProductList: React.FC<ProductListProps> = ({
 
   return (
     <div className="w-full max-w-4xl mt-8 mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center bg-gradient-to-r from-blue-50 to-blue-100 py-3 rounded-2xl shadow-lg flex items-center justify-center gap-3">
-        <MdOutlineShoppingCart className="text-blue-500 text-3xl animate-bounce" />
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-8 text-center bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 py-3 rounded-2xl shadow-lg flex items-center justify-center gap-3 transition-colors duration-300">
+        <MdOutlineShoppingCart className="text-blue-500 dark:text-blue-400 text-3xl animate-bounce" />
         Explora Tu Inventario
       </h2>
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 place-items-center">
@@ -58,7 +58,7 @@ const ProductList: React.FC<ProductListProps> = ({
           products.map((product) => (            <div
               key={getProductId(product)}
               data-testid={`product-card-${getProductId(product)}`}
-              className="bg-white bg-opacity-95 backdrop-blur-sm text-gray-800 rounded-2xl shadow-lg p-6 border border-blue-100 hover:shadow-2xl hover:border-blue-300 transform hover:-translate-y-1 transition-all duration-300 w-full max-w-sm mx-auto relative overflow-hidden group"
+              className="bg-white dark:bg-gray-800 bg-opacity-95 backdrop-blur-sm text-gray-800 dark:text-gray-100 rounded-2xl shadow-lg p-6 border border-blue-100 dark:border-gray-700 hover:shadow-2xl hover:border-blue-300 dark:hover:border-blue-500 transform hover:-translate-y-1 transition-all duration-300 w-full max-w-sm mx-auto relative overflow-hidden group"
             >
               {product.purchased && (
                 <div className="absolute top-0 right-0 bg-green-500 text-white px-4 py-1 rounded-bl-lg transform translate-x-2 -translate-y-2 rotate-12 shadow-md">
@@ -67,16 +67,16 @@ const ProductList: React.FC<ProductListProps> = ({
               )}
               <h3 
                 data-testid={`product-name-${getProductId(product)}`}
-                className="text-xl font-bold mb-4 text-center text-blue-800 group-hover:text-blue-600 transition-colors"
+                className="text-xl font-bold mb-4 text-center text-blue-800 dark:text-blue-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
               >
                 {product.name}
               </h3>
               <div className="space-y-4">
-                <div className={`bg-blue-50 rounded-xl p-4 transform transition-all duration-300 ${loadingQuantity === getProductId(product) ? 'animate-pulse' : 'hover:scale-105'}`}>
+                <div className={`bg-blue-50 dark:bg-gray-700 rounded-xl p-4 transform transition-all duration-300 ${loadingQuantity === getProductId(product) ? 'animate-pulse' : 'hover:scale-105'}`}>
                   <div className="flex justify-center items-center gap-4">                    <button
                       onClick={() => handleQuantityUpdate(getProductId(product), product.quantity - 1)}
                       data-testid={`decrease-quantity-${getProductId(product)}`}
-                      className="w-8 h-8 rounded-full bg-blue-100 hover:bg-blue-200 flex items-center justify-center text-blue-600 transition-colors"
+                      className="w-8 h-8 rounded-full bg-blue-100 dark:bg-gray-600 hover:bg-blue-200 dark:hover:bg-gray-500 flex items-center justify-center text-blue-600 dark:text-blue-300 transition-colors"
                       disabled={loadingQuantity === getProductId(product)}
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,15 +85,15 @@ const ProductList: React.FC<ProductListProps> = ({
                     </button>
                     <p className="text-center">                      <span 
                         data-testid={`quantity-value-${getProductId(product)}`}
-                        className={`text-3xl font-bold text-blue-600 transition-all duration-300 ${loadingQuantity === getProductId(product) ? 'opacity-50' : ''}`}
+                        className={`text-3xl font-bold text-blue-600 dark:text-blue-400 transition-all duration-300 ${loadingQuantity === getProductId(product) ? 'opacity-50' : ''}`}
                       >
                         {product.quantity}
                       </span>
-                      <span className="text-sm text-gray-600 ml-2">unidades</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-300 ml-2">unidades</span>
                     </p>                    <button
                       onClick={() => handleQuantityUpdate(getProductId(product), product.quantity + 1)}
                       data-testid={`increase-quantity-${getProductId(product)}`}
-                      className="w-8 h-8 rounded-full bg-blue-100 hover:bg-blue-200 flex items-center justify-center text-blue-600 transition-colors"
+                      className="w-8 h-8 rounded-full bg-blue-100 dark:bg-gray-600 hover:bg-blue-200 dark:hover:bg-gray-500 flex items-center justify-center text-blue-600 dark:text-blue-300 transition-colors"
                       disabled={loadingQuantity === getProductId(product)}
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,19 +103,19 @@ const ProductList: React.FC<ProductListProps> = ({
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors">
-                    <p className="text-gray-500 text-sm">Categoría</p>
-                    <p className="font-semibold text-gray-800 truncate" title={product.categoria}>{product.categoria}</p>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">Categoría</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100 truncate" title={product.categoria}>{product.categoria}</p>
                   </div>
-                  <div className="bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors">
-                    <p className="text-gray-500 text-sm">Prioridad</p>                    <p className="font-semibold text-gray-800 flex flex-wrap gap-0.5" data-testid={`priority-${getProductId(product)}`}>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">Prioridad</p>                    <p className="font-semibold text-gray-800 dark:text-gray-100 flex flex-wrap gap-0.5" data-testid={`priority-${getProductId(product)}`}>
                       {Array.from({ length: product.prioridad }).map((_, index) => (
                         <span key={index} className="text-amber-400">⭐</span>
                       ))}
                     </p>
                   </div>
                 </div>
-                <div className="text-xs text-gray-500 text-right">
+                <div className="text-xs text-gray-500 dark:text-gray-400 text-right">
                   Creado: {new Date(product.createdAt).toLocaleDateString()}
                 </div>
               </div>
@@ -158,9 +158,9 @@ const ProductList: React.FC<ProductListProps> = ({
           ))
         ) : (
           <div className="col-span-full text-center py-12">
-            <div className="bg-gray-50 rounded-2xl p-8 max-w-md mx-auto">
-              <MdOutlineShoppingCart className="text-4xl text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">No hay productos disponibles.</p>
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 max-w-md mx-auto transition-colors">
+              <MdOutlineShoppingCart className="text-4xl text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-500 dark:text-gray-400 text-lg">No hay productos disponibles.</p>
             </div>
           </div>
         )}
@@ -168,32 +168,32 @@ const ProductList: React.FC<ProductListProps> = ({
       {/* Controles de paginación */}
       {totalPages > 1 && (
         <div className="mt-12 flex flex-col items-center gap-4">
-          <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md">
+          <div className="flex items-center gap-2 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md transition-colors">
             <button              onClick={onPreviousPage}
               disabled={currentPage <= 1}
               data-testid="previous-page"
-              className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent transition-colors"
               aria-label="Página anterior"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <span className="px-4 font-medium text-gray-700">
+            <span className="px-4 font-medium text-gray-700 dark:text-gray-300">
               Página {currentPage} de {totalPages}
             </span>
             <button              onClick={onNextPage}
               disabled={currentPage >= totalPages}
               data-testid="next-page"
-              className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent transition-colors"
               aria-label="Página siguiente"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {products.length === 0 
               ? 'No hay productos' 
               : `Mostrando ${products.length} ${products.length === 1 ? 'producto' : 'productos'}`

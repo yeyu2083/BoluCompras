@@ -294,8 +294,8 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-br from-green-400 via-blue-500 to-blue-600 text-gray-900 p-8 pt-16">
-      <Card className="w-full max-w-6xl shadow-2xl mb-8 bg-gradient-to-br from-gray-800 to-gray-700 rounded-lg border border-gray-600">
+    <main className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-br from-green-400 via-blue-500 to-blue-600 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-900 dark:text-gray-100 p-8 pt-16 transition-colors duration-300">
+      <Card className="w-full max-w-6xl shadow-2xl mb-8 bg-gradient-to-br from-gray-800 to-gray-700 dark:from-gray-800 dark:to-gray-900 rounded-lg border border-gray-600 dark:border-gray-700">
         <CardHeader>
           <div className="flex flex-col items-center">
             <Image
@@ -303,12 +303,12 @@ export default function Home() {
               alt="Bolucompras Logo"
               width={120}
               height={120}
-              className="mb-6 rounded-full shadow-lg border-4 border-gray-500"
+              className="mb-6 rounded-full shadow-lg border-4 border-gray-500 dark:border-gray-600"
             />
             <CardTitle className="text-center text-4xl font-extrabold text-gray-100 tracking-wide">
               Bienvenido a Bolucompras
             </CardTitle>
-            <p className="text-center text-gray-300 mt-2 text-lg">
+            <p className="text-center text-gray-300 dark:text-gray-400 mt-2 text-lg">
               Tu lista de compras inteligente
             </p>
           </div>
@@ -331,7 +331,7 @@ export default function Home() {
       </Card>
 
       {showTable && (
-        <div className="flex flex-col items-center w-full max-w-6xl mx-auto mt-8 bg-white/10 backdrop-blur-lg rounded-lg p-6 shadow-xl">
+        <div className="flex flex-col items-center w-full max-w-6xl mx-auto mt-8 bg-white/10 dark:bg-black/20 backdrop-blur-lg rounded-lg p-6 shadow-xl transition-colors duration-300">
           <ProductList
             products={fetchedProducts}
             onUpdateQuantity={handleUpdateQuantity}

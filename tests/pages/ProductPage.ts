@@ -67,7 +67,8 @@ export class ProductPage {
      * @param priority - Prioridad del producto (opcional, por defecto 1)
      */
     async addProduct(name: string, category: string = 'General', priority: number = 1) {
-        // 1. Llenar el formulario
+        // 1. Limpiar y llenar el formulario
+        await this.productNameInput.clear();
         await this.productNameInput.fill(name);
         await this.productNameInput.press('Tab');
 
@@ -83,13 +84,20 @@ export class ProductPage {
             await this.setPriority(priority);
         }
 
-        // 4. Click en el botón de agregar
+        // 4. Click en el botón de agregar y esperar respuesta del servidor
+        const responsePromise = this.page.waitForResponse(
+            response => response.url().includes('/api/products') && response.request().method() === 'POST'
+        );
         await this.addProductButton.click();
+        await responsePromise;
         
-        // 5. Abrir la lista de productos si no está visible
+        // 5. Pequeña pausa para que React actualice el estado
+        await this.page.waitForTimeout(300);
+        
+        // 6. Abrir la lista de productos si no está visible
         await this.openProductList();
         
-        // 6. Esperar a que el producto aparezca en la lista
+        // 7. Esperar a que el producto específico aparezca en la lista
         await this.page.waitForSelector(`[data-testid^="product-card-"]`, { 
             state: 'visible',
             timeout: 5000 
@@ -213,9 +221,10 @@ export class ProductPage {
     /**
      * @description Elimina un producto específico
      * @param productName - Nombre del producto a eliminar
-     */    async deleteProduct(productName: string) {
+     */
+    async deleteProduct(productName: string) {
         const card = await this.getProductCard(productName);
-        await card.locator('[data-testid="delete-product-6838fb07ddc23d23d9763b9f"]').click();
+        await card.locator('[data-testid^="delete-product-"]').click();
         // Esperamos a que el producto sea eliminado
         await this.page.waitForResponse(response => response.url().includes('/api/products') && response.request().method() === 'DELETE');
     }

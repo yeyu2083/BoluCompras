@@ -10,7 +10,7 @@ export default defineConfig({  testDir: './tests',
   reporter: 'html',
   use: {
     actionTimeout: 0,
-    baseURL: 'http://localhost:9002',
+    baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
   },
   projects: [

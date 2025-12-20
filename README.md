@@ -31,11 +31,14 @@ Bolucompras List es una aplicación moderna y eficiente para gestionar listas de
   - Si se confirma, la cantidad del producto se incrementa.
   - Si se cancela, no se realizan cambios en la lista ni en el backend.
 
-## Funcionalidades Avanzadas con n8n
+## 🔜 Funcionalidades Avanzadas (Próximamente)
+
+> **Nota:** Las siguientes funcionalidades están planificadas para futuras versiones.
 
 - **Sugerencias Inteligentes de Productos**: Integración con APIs de IA para recibir recomendaciones basadas en tu historial de compras.
 - **Análisis de Patrones de Compra**: Identifica productos comprados frecuentemente y sugiere cuándo es probable que necesites reabastecerlos.
 - **Notificaciones Personalizadas**: Recibe alertas sobre productos que compras regularmente.
+- **Integración con n8n**: Automatización de flujos de trabajo y notificaciones.
 
 ## Nuevas Funcionalidades y Mejoras
 
@@ -98,17 +101,12 @@ Estas reglas aseguran la integridad de los datos y mejoran la experiencia del us
 ### Backend
 - **API RESTful**: Express.js con Node.js para operaciones CRUD básicas.
 - **Base de Datos**: MongoDB para almacenar productos y cantidades.
-- **Automatización**: n8n para integraciones con IA y funcionalidades avanzadas.
 
 ### Endpoints de API
 - `GET /api/products`: Obtiene la lista de productos.
 - `POST /api/products`: Agrega un nuevo producto.
 - `PATCH /api/products/:id`: Actualiza un producto existente.
 - `DELETE /api/products/:id`: Elimina un producto.
-
-### Workflows de n8n
-- `Sugerencias de Productos`: Analiza patrones de compra y genera recomendaciones.
-- `Notificaciones`: Envía recordatorios sobre productos recurrentes.
 
 ## Configuración del Proyecto
 
@@ -130,7 +128,6 @@ Estas reglas aseguran la integridad de los datos y mejoran la experiencia del us
 - **Express**: ^4.18.2
 - **MongoDB**: ^6.1.0
 - **Mongoose**: ^8.0.0
-- **n8n**: Para integraciones y automatizaciones avanzadas.
 
 ## Estructura del Proyecto
 
@@ -167,38 +164,116 @@ BoluCompras/
 │   │   └── products.js
 │   └── config/
 │       └── db.js
-├── n8n/
-    └── workflows/
-        ├── product-suggestions.json
-        └── notifications.json
+└── tests/
+    ├── addProduct.spec.ts
+    ├── happyPath.spec.ts
+    ├── update-purchased.spec.ts
+    └── pages/
+        └── ProductPage.ts
 ```
 
 ## Cómo Empezar
 
-1. Clona el repositorio:
-   ```bash
-   git clone <url-del-repositorio>
+### Requisitos Previos
+- Node.js 18+ instalado
+- Docker y Docker Compose (opcional, para desarrollo con contenedores)
+- Cuenta en MongoDB Atlas (o MongoDB local)
+
+### 1. Clonar e Instalar
+
+```bash
+git clone <url-del-repositorio>
+cd BoluCompras
+npm install
+```
+
+### 2. Configurar Variables de Entorno
+
+Crea un archivo `.env` en la raíz del proyecto:
+
+```env
+# MongoDB Atlas (recomendado)
+MONGO_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/bolucompras?retryWrites=true&w=majority
+
+# O MongoDB Local
+# MONGO_URI=mongodb://localhost:27017/bolucompras
+
+PORT=9002
+```
+
+---
+
+## 🚀 Levantar el Proyecto
+
+### Opción A: Desarrollo Local (Recomendado)
+
+Necesitas **2 terminales**:
+
+```bash
+# Terminal 1 - Backend (Express + MongoDB)
+npm run server
+```
+
+```bash
+# Terminal 2 - Frontend (Next.js)
+npm run dev
+```
+
+📍 **URLs:**
+- Frontend: http://localhost:9002
+- Backend API: http://localhost:9002/api/products
+
+---
+
+### Opción B: Docker (Todo en un comando)
+
+```bash
+# Levantar todos los servicios
+docker-compose up --build
+
+# O en segundo plano
+docker-compose up -d --build
+```
+
+```bash
+# Para detener
+docker-compose down
+```
+
+📍 **URLs:**
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:9002/api/products
+
+---
+
+### Opción C: Solo Backend con Docker
+
+```bash
+docker-compose up backend --build
+```
+
+---
+
+## 🧪 Ejecutar Tests
+
+```bash
+# Ejecutar todos los tests
+npm test
+
+# Ejecutar tests con UI de Playwright
+npm run test:ui
+```
+
+---
+
+## 🧭 Ver Base de Datos con MongoDB Compass
+
+1. Descarga [MongoDB Compass](https://www.mongodb.com/products/compass)
+2. Conecta usando tu string de conexión:
    ```
-2. Instala las dependencias:
-   ```bash
-   npm install
+   mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/bolucompras
    ```
-3. Configura la conexión a MongoDB:
-   - Crea un archivo `.env` en la raíz del proyecto
-   - Añade `MONGODB_URI=tu_uri_de_mongodb`
-   
-4. Inicia el servidor Express:
-   ```bash
-   npm run server
-   ```
-5. En otra terminal, inicia el servidor de desarrollo de Next.js:
-   ```bash
-   npm run dev
-   ```
-6. Para funcionalidades avanzadas, configura n8n:
-   - Instala n8n: `npm install n8n -g`
-   - Inicia n8n: `n8n start`
-   - Importa los workflows de la carpeta `n8n/workflows`
+3. Explora la colección `products` en tiempo real
 
 ## Configuración de MongoDB Atlas (Gratuito)
 
@@ -210,8 +285,9 @@ BoluCompras/
 
 ## Notas Adicionales
 
-- La aplicación está optimizada para operaciones CRUD básicas con Express y MongoDB, mientras que n8n se utiliza para funcionalidades avanzadas como integraciones con IA.
+- La aplicación está optimizada para operaciones CRUD básicas con Express y MongoDB.
 - Para entornos de producción, considera implementar autenticación de usuarios.
+- Las funcionalidades avanzadas (IA, notificaciones) están planificadas para futuras versiones.
 
 ## Licencia
 

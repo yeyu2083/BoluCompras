@@ -6,13 +6,17 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm install
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Set backend URL for build time (rewrites in next.config.ts)
+ARG BACKEND_URL=http://backend:9002
+ENV BACKEND_URL=${BACKEND_URL}
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
